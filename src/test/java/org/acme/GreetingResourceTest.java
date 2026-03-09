@@ -17,4 +17,14 @@ class GreetingResourceTest {
              .body(is("Hello from Quarkus REST"));
     }
 
+    @Test
+    void testHeaderIsStoredInRequestContextHolder() {
+        given()
+            .header("x-test-header", "abc123")
+            .when().get("/hello/header")
+            .then()
+            .statusCode(200)
+            .body(is("abc123"));
+    }
+
 }
