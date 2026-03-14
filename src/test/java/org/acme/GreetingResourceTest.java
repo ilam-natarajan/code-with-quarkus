@@ -27,4 +27,13 @@ class GreetingResourceTest {
             .body(is("abc123"));
     }
 
+    @Test
+    void testMissingHeaderReturnsMissing() {
+        given()
+            .when().get("/hello/header")
+            .then()
+            .statusCode(200)
+            .body(is("missing"));
+    }
+
 }
