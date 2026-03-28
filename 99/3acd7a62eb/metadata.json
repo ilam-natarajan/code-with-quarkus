@@ -5,6 +5,8 @@
   "branch": "main",
   "checkpoints_count": 1,
   "files_touched": [
+    ".entire/.gitignore",
+    ".entire/settings.json",
     ".github/hooks/entire.json"
   ],
   "sessions": [
@@ -13,13 +15,19 @@
       "transcript": "/99/3acd7a62eb/0/full.jsonl",
       "content_hash": "/99/3acd7a62eb/0/content_hash.txt",
       "prompt": "/99/3acd7a62eb/0/prompt.txt"
+    },
+    {
+      "metadata": "/99/3acd7a62eb/1/metadata.json",
+      "transcript": "/99/3acd7a62eb/1/full.jsonl",
+      "content_hash": "/99/3acd7a62eb/1/content_hash.txt",
+      "prompt": "/99/3acd7a62eb/1/prompt.txt"
     }
   ],
   "token_usage": {
     "input_tokens": 256743,
     "cache_creation_tokens": 0,
     "cache_read_tokens": 208013,
-    "output_tokens": 8160,
-    "api_call_count": 17
+    "output_tokens": 8827,
+    "api_call_count": 21
   }
 }
