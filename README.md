@@ -1,62 +1,122 @@
 # code-with-quarkus
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+A Quarkus REST API demo project that showcases Spring Framework integration within Quarkus — specifically using `RequestContextHolder` for request-scoped data and HTTP header propagation via JAX-RS filters.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+Built with [Quarkus 3.19.3](https://quarkus.io/) and Java 21.
 
-## Running the application in dev mode
+## Overview
 
-You can run your application in dev mode that enables live coding using:
+This project demonstrates:
 
-```shell script
+- **REST endpoints** with JAX-RS (`/hello`, `/hello/header`)
+- **Spring Web integration** — using `RequestContextHolder` in a Quarkus app
+- **Custom `RequestAttributes`** implementation backed by `ConcurrentHashMap` for request-scoped storage
+- **JAX-RS filter** that extracts the `x-test-header` HTTP header and stores it in request context
+- **CDI dependency injection** with application-scoped and request-scoped beans
+- **Startup lifecycle** with `@PostConstruct` initialization
+
+## Project Structure
+
+```
+src/
+├── main/java/org/acme/
+│   ├── GreetingResource.java               # REST controller — GET /hello, GET /hello/header
+│   ├── PaymentService.java                 # Application-scoped service with startup init
+│   ├── QuarkusRequestAttributes.java       # Custom Spring RequestAttributes implementation
+│   └── TestHeaderRequestContextFilter.java # JAX-RS filter for x-test-header extraction
+├── main/resources/
+│   └── application.properties
+└── test/java/org/acme/
+    ├── GreetingResourceTest.java           # Unit tests (QuarkusTest)
+    └── GreetingResourceIT.java             # Native image integration tests
+```
+
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/hello` | Returns a greeting string via `PaymentService` |
+| `GET` | `/hello/header` | Returns the value of the `x-test-header` request header (or `"missing"` if absent) |
+
+**Example:**
+```bash
+curl http://localhost:8080/hello
+curl -H "x-test-header: abc123" http://localhost:8080/hello/header
+```
+
+## Prerequisites
+
+- Java 21+
+- Gradle (or use the included `./gradlew` wrapper)
+- _(Optional)_ GraalVM for native builds
+
+## Running
+
+### Dev mode (hot reload)
+
+```bash
 ./gradlew quarkusDev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+The Dev UI is available at <http://localhost:8080/q/dev/> in dev mode only.
 
-## Packaging and running the application
+### Run packaged JAR
 
-The application can be packaged using:
-
-```shell script
+```bash
 ./gradlew build
+java -jar build/quarkus-app/quarkus-run.jar
 ```
 
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+### Über-JAR
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
+```bash
 ./gradlew build -Dquarkus.package.jar.type=uber-jar
+java -jar build/*-runner.jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+## Testing
 
-## Creating a native executable
+```bash
+# Unit tests
+./gradlew test
 
-You can create a native executable using:
+# All verification (tests + checks)
+./gradlew check
+```
 
-```shell script
+## Native Executable
+
+Build with GraalVM installed:
+
+```bash
 ./gradlew build -Dquarkus.native.enabled=true
+./build/code-with-quarkus-1.0.0-SNAPSHOT-runner
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+Build using Docker (no local GraalVM required):
 
-```shell script
+```bash
 ./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./build/code-with-quarkus-1.0.0-SNAPSHOT-runner`
+Run native integration tests:
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
+```bash
+./gradlew testNative
+```
 
-## Provided Code
+## Key Dependencies
 
-### REST
+| Dependency | Purpose |
+|-----------|---------|
+| `quarkus-arc` | CDI dependency injection |
+| `quarkus-resteasy` | JAX-RS REST support |
+| `quarkus-undertow` | Servlet container |
+| `spring-web` / `spring-context` 6.2.8 | Spring `RequestContextHolder` integration |
+| `quarkus-junit5` + `rest-assured` | Testing |
 
-Easily start your REST Web Services
+## Learn More
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+- [Quarkus Documentation](https://quarkus.io/guides/)
+- [Quarkus Gradle Tooling](https://quarkus.io/guides/gradle-tooling)
+- [Spring DI compatibility in Quarkus](https://quarkus.io/guides/spring-di)
